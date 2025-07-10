@@ -13,7 +13,7 @@ This project demonstrates how to deploy a Windows Server 2019 VM in Hyper-V, con
 - 🔍 KQL queries to analyze Security Events
 
 ## 📄 Guide
-See `setup-guide/Windows_Server_2019_Sentinel_Integration_Guide.txt` for the full step-by-step process.
+See `Windows_Server_2019_Sentinel_Integration_Guide.txt` for the full step-by-step process.
 
 ## 📊 KQL Examples
 
