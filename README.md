@@ -18,3 +18,9 @@ See `Windows_Server_2019_Sentinel_Integration_Guide.txt` for the full step-by-st
 ```kql
 SecurityEvent
 | summarize count() by EventID
+
+🚀 Try It Yourself
+All steps use free tools and the Azure free tier. Great for students and entry-level professionals.
+
+🧑‍💻 Author
+Swadesh Rawana - Linkdn : http://linkedin.com/in/swadesh-rawana-297858352
