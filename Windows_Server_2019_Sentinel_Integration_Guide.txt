@@ -1,0 +1,115 @@
+
+# 📘 Project Guide: Windows Server 2019 Integration with Microsoft Sentinel
+
+---
+
+## 🧱 Part 1: Set Up Windows Server 2019 on Hyper-V
+
+### ✅ Step 1: Enable Hyper-V on Your Host Machine
+1. Open **Control Panel > Programs > Turn Windows features on or off**
+2. Check **Hyper-V**, then click **OK**
+3. Restart your computer when prompted
+
+### ✅ Step 2: Download Windows Server 2019 ISO
+- Visit [Microsoft Evaluation Center](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019)
+- Download the **ISO image**
+
+### ✅ Step 3: Create Virtual Machine in Hyper-V
+1. Open **Hyper-V Manager**
+2. Click **New > Virtual Machine**
+3. Configure:
+   - Name: `WinServer2019`
+   - Generation: **Generation 1 or 2** (based on ISO support)
+   - RAM: **4GB+**
+   - Network: **Default switch**
+4. Attach the **ISO file** under “Installation Options”
+5. Finish setup and **start the VM**
+
+### ✅ Step 4: Install Windows Server 2019
+1. Follow the installer steps
+2. Set admin password
+3. Once installed, install **Hyper-V Integration Services** (if needed)
+
+---
+
+## ☁️ Part 2: Connect Server to Azure via Arc
+
+### ✅ Step 5: Install Azure Connected Machine Agent
+On your VM:
+1. Download the agent: [Azure Arc Agent](https://learn.microsoft.com/en-us/azure/azure-arc/servers/onboard-agent#install-the-azure-connected-machine-agent)
+2. Run the installer
+3. Use the onboarding script provided in the Azure Portal
+
+📌 You can get this from:
+- **Azure Arc > Servers > Add > Generate Script**
+
+---
+
+## 📦 Part 3: Install Monitoring Agent for Logs
+
+### ✅ Step 6: Install Azure Monitor Agent
+Once Azure Arc is installed:
+1. In Azure: Go to **Azure Arc > [Your server]**
+2. Click **Extensions > Add**
+3. Select **Azure Monitor Agent**
+
+---
+
+## 📊 Part 4: Configure Log Collection in Sentinel
+
+### ✅ Step 7: Create a Log Analytics Workspace (LAW)
+1. Go to **Microsoft Sentinel > Create > Log Analytics Workspace**
+2. Name: `Sentinel-LAW`
+3. Select Resource Group and Region
+4. Click **Review + Create**
+
+### ✅ Step 8: Enable Microsoft Sentinel
+1. Go to **Microsoft Sentinel > + Add**
+2. Select your **LAW**
+3. Click **Add**
+
+### ✅ Step 9: Connect Data Source
+1. In Sentinel, go to **Data connectors**
+2. Search: `Windows Security Events via AMA`
+3. Click **Open connector page**
+4. Select your onboarded server
+5. Choose logs:
+   - Security
+   - System
+   - Application
+6. Click **Apply changes**
+
+---
+
+## 🔍 Part 5: View Event Logs in Sentinel
+
+### ✅ Step 10: Run KQL in Sentinel Logs
+
+#### 🔹 All Events:
+```kql
+Event
+| where TimeGenerated > ago(1d)
+| project TimeGenerated, EventID, Computer, RenderedDescription
+```
+
+#### 🔹 Filter Security Events:
+```kql
+SecurityEvent
+| summarize count() by EventID
+```
+
+#### 🔹 Specific Event (e.g. 4625 - failed login):
+```kql
+SecurityEvent
+| where EventID == 4625
+| project TimeGenerated, Account, Computer, LogonType, Status
+```
+
+---
+
+## 🎉 Done!
+You now have a working setup where:
+- A Windows Server 2019 VM is running on Hyper-V
+- It's onboarded to Azure using Arc
+- Logs are collected via Azure Monitor Agent
+- Event logs are sent and visible in Microsoft Sentinel
